@@ -1,0 +1,27 @@
+{
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "build",
+            "command": "C:\\Software\\mingw64\\bin\\g++.exe",
+            "args": [
+                "-g",
+                "-I",
+                "include/",
+                "-L",
+                "lib/",
+                "main.cpp",
+                "-o",
+                "build/main.exe",
+                // "-lglad",
+                // "lib/glfw3.dll"
+            ],
+            "options": {},
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ],
+    "version": "2.0.0"
+}
