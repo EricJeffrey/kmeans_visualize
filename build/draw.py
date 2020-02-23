@@ -45,14 +45,16 @@ def work():
         for cluster in data["clusters"]:
             if cluster["centroid"]:
                 paint(ax, cluster["xss"][0],
-                      cluster["xss"][1], cluster["color"], marker='o')
-                paint(ax, [cluster["centroid"][0]], [
-                      cluster["centroid"][1]], "#000000", marker='^')
+                      cluster["xss"][1], cluster["color"], marker=',')
+                paint(ax, cluster["centroid"][0],
+                      cluster["centroid"][1], "#000000", marker='^')
     elif data["dimension"] == 3:
         ax = fig.add_subplot(111, projection='3d')
         for cluster in data["clusters"]:
             paint(ax, cluster["xss"][0], cluster["xss"]
-                  [1], cluster["color"], cluster["xss"][2])
+                  [1], cluster["color"], cluster["xss"][2], marker=',')
+            paint(ax, cluster["centroid"][0], cluster["centroid"]
+                  [1], cluster["color"], cluster["centroid"][2], marker='^')
     plt.show()
     pass
 

@@ -32,13 +32,13 @@ using std::vector;
  *           聚簇中心点未变？退出
  *      输出聚簇
  * END
- * 
+ *
  * 数据结构
  * 点 - ==() toString()
- * 聚簇 - 计算中心点() 
+ * 聚簇 - 计算中心点()
  * calcDis(point cluster)
- * kmeans() - 
-*/
+ * kmeans() -
+ */
 
 class VirtualPoint {
 private:
@@ -51,18 +51,18 @@ public:
 };
 
 typedef shared_ptr<VirtualPoint> sharedVPoint;
-typedef sharedVPoint avgPointFunc(const vector<sharedVPoint> &);
+typedef sharedVPoint (*avgPointFunc)(const vector<sharedVPoint> &);
 
 class Cluster {
 private:
     vector<sharedVPoint> points;
     sharedVPoint centroid;
-    avgPointFunc *avgPoints;
+    avgPointFunc avgPoints;
 
 public:
     Cluster(avgPointFunc avg) { avgPoints = avg; }
     ~Cluster() {}
-    Cluster &setCentroid(sharedVPoint p) {
+    Cluster &setCentroid(const sharedVPoint &p) {
         centroid = p;
         points.push_back(p);
         return *this;
@@ -72,16 +72,15 @@ public:
         if (tmpPoint == nullptr) return false;
         bool changed;
         if (tmpPoint != nullptr && centroid != nullptr)
-            changed = (*tmpPoint) != (*centroid);
+            changed = ((*tmpPoint) != (*centroid));
         else
             changed = true;
         centroid = tmpPoint;
+        // cerr << "DEBUG\t" << centroid->toString() << endl;
         return changed;
     }
     void clear() { points.clear(); }
-    void addPoint(sharedVPoint p) {
-        points.push_back(p);
-    }
+    void addPoint(const sharedVPoint &p) { points.push_back(p); }
     string toString() const {
         stringstream ss;
         if (centroid == nullptr || points.size() == 0) return "{}";
@@ -108,20 +107,20 @@ public:
     static vector<int> randDiffNumbers(int n, int k) {
         const int maxn = 100000000;
         vector<int> res;
-        if (n <= 0 || n >= maxn)
-            throw std::runtime_error("n is less than zero or greater than maxn(100,000,000)");
-        for (int i = 0; i < n; i++)
-            res.push_back(i);
+        if (n <= 0 || n >= maxn) throw std::runtime_error("n is less than zero or greater than maxn(100,000,000)");
+        for (int i = 0; i < n; i++) res.push_back(i);
         random_shuffle(res.begin(), res.end());
         res.resize(k);
         return res;
     }
-    static vector<Cluster> run(vector<sharedVPoint> data, int k, calcFunc calcDis, avgPointFunc avgPoints, const int maxRuond = 2000) {
+    static vector<Cluster> run(const vector<sharedVPoint> &data, int k, calcFunc calcDis,
+                               sharedVPoint (*avgPoints)(const vector<sharedVPoint> &), const int maxRuond = 2000) {
         if (k <= 1) throw std::runtime_error("k is less than 1");
         vector<Cluster> clusters;
-        for (auto &&i : randDiffNumbers(data.size(), k))
-            clusters.push_back(Cluster(avgPoints).setCentroid(data[i]));
+        for (auto &&i : randDiffNumbers(data.size(), k)) clusters.push_back(Cluster(avgPoints).setCentroid(data[i]));
         for (int round = 0; round < maxRuond; round++) {
+            // cerr << "DEBUG\t"
+            //      << "ROUND: " << round << endl;
             // 清空
             for (auto &&c : clusters) c.clear();
             for (size_t i = 0; i < data.size(); i++) {
@@ -135,7 +134,10 @@ public:
                 clusters[minIndex].addPoint(data[i]);
             }
             bool changed = false;
-            for (auto &&c : clusters) changed = changed || c.updateCentroid();
+            for (auto &&c : clusters) {
+                bool tmp = c.updateCentroid();
+                changed = changed || tmp;
+            }
             if (!changed) break;
 
             // cerr << "debug\t\tround: " << round << " ";

@@ -29,11 +29,10 @@ public:
             if (xs[i] != pp.xs[i]) return true;
         return false;
     }
-    NDimenPoint operator+(const NDimenPoint &p) {
+    void add(const NDimenPoint &p) {
         if (p.dimension != dimension) throw runtime_error("dimension mismatch");
-        NDimenPoint res(p.dimension);
-        for (size_t i = 0; i < xs.size(); i++) res.xs[i] += p.xs[i];
-        return res;
+        for (size_t i = 0; i < xs.size(); i++)
+            xs[i] += p.xs[i];
     }
     NDimenPoint operator/(const int n) {
         if (n == 0) throw std::runtime_error("divisor zero error!");
@@ -68,8 +67,9 @@ public:
         if (points.size() <= 0) return nullptr;
         NDimenPoint resPoint(static_cast<const NDimenPoint &>(*points[0]).dimension);
         for (auto &&p : points)
-            resPoint = resPoint + static_cast<const NDimenPoint &>(*p);
+            resPoint.add(static_cast<const NDimenPoint &>(*p));
         resPoint = resPoint / points.size();
+        // cerr << "DEBUG\t" << resPoint.toString() << ", POINTS.SIZE " << points.size() << endl;
         return make_shared<NDimenPoint>(resPoint);
     };
 };
