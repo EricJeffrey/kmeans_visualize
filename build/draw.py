@@ -23,7 +23,7 @@ def readData():
     clusterCnt = 0
     for tmpRawCluster in data["clusters"]:
         tmpCluster = {"centroid": None, "xss": [],
-                      "color": colors[clusterCnt % 140]}
+                      "color": colors[clusterCnt % len(colors)]}
         if "centroid" in tmpRawCluster:
             tmpCluster["centroid"] = tmpRawCluster["centroid"]
         for i in range(0, dimension):
@@ -44,17 +44,17 @@ def work():
         ax = fig.add_subplot(111)
         for cluster in data["clusters"]:
             if cluster["centroid"]:
-                paint(ax, cluster["xss"][0],
-                      cluster["xss"][1], cluster["color"], marker=',')
                 paint(ax, cluster["centroid"][0],
                       cluster["centroid"][1], "#000000", marker='^')
+                paint(ax, cluster["xss"][0],
+                      cluster["xss"][1], cluster["color"], marker=',')
     elif data["dimension"] == 3:
         ax = fig.add_subplot(111, projection='3d')
         for cluster in data["clusters"]:
-            paint(ax, cluster["xss"][0], cluster["xss"]
-                  [1], cluster["color"], cluster["xss"][2], marker=',')
             paint(ax, cluster["centroid"][0], cluster["centroid"]
                   [1], cluster["color"], cluster["centroid"][2], marker='^')
+            paint(ax, cluster["xss"][0], cluster["xss"]
+                  [1], cluster["color"], cluster["xss"][2], marker=',')
     plt.show()
     pass
 

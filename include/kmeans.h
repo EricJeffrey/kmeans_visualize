@@ -98,12 +98,12 @@ void output(const vector<Cluster> &clusters, const int dimension) {
 void kmeans_work() {
 
     const int maxRound = 10000;
-    const int pointCnt = 150;
+    int pointCnt = 150;
     int dimension = 1;
     int k = 0;
 
-    cerr << "dimension, k: ";
-    cin >> dimension >> k;
+    cerr << "dimension, k, point_count: ";
+    cin >> dimension >> k >> pointCnt;
     vector<sharedVPoint> points;
     for (auto &&p : geneData(pointCnt, dimension))
         points.push_back(make_shared<NDimenPoint>(p));
